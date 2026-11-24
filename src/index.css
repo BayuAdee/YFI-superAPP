@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/* Font sistem (Segoe UI di Windows): tanpa Google Fonts, jaringan pabrik belum tentu punya internet. */
+@theme {
+  --font-sans: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Muncul halus untuk layar baru dan popup (sama dengan Safety Patrol). Mati bila prefers-reduced-motion. */
+  --animate-muncul: muncul 160ms ease-out;
+  @keyframes muncul { from { opacity: 0; transform: translateY(4px); } }
+}
+
+@layer base {
+  body { @apply bg-gray-100 text-gray-900 antialiased; }
+  button, a, label, select, summary { touch-action: manipulation; }
+  button:not(:disabled), select { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--color-gray-900); outline-offset: 2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { transition: none !important; animation: none !important; }
+}
