@@ -1,4 +1,4 @@
-// Semua data lewat API Laravel (folder backend/). Vite meneruskan /api ke Laravel.
+// Semua data lewat API Laravel (app/, routes/api.php). Vite meneruskan /api ke Laravel.
 const KEY = 'token'
 
 export async function api(path, { body, method = body ? 'POST' : 'GET' } = {}) {

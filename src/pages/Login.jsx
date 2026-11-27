@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { LogIn } from 'lucide-react'
 import { login } from '../api'
+import logo from '../logo.jpg'
 import { BTN, INPUT, PasswordInput } from '../ui'
 
 // Desktop: panel hitam bermotif (identitas, sama dengan kartu sambutan Safety Patrol) + form. HP: form saja.
@@ -26,7 +27,7 @@ export default function Login({ onLogin }) {
       <section className="relative hidden flex-col justify-between overflow-hidden bg-gray-950 p-10 text-white lg:flex">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.06] [background:repeating-linear-gradient(-45deg,#fff_0_14px,transparent_14px_32px)] [mask-image:linear-gradient(to_top_right,transparent,#000)]" />
         <div className="relative flex items-center gap-3">
-          <img src="/logo.jpg" alt="" className="h-11 w-11 rounded-full bg-white ring-2 ring-white/20" />
+          <img src={logo} alt="" className="h-11 w-11 rounded-full bg-white ring-2 ring-white/20" />
           <span className="leading-tight"><span className="block font-bold tracking-wide">SUPERAPPS</span><span className="block text-sm text-gray-400">PT Yahata Fastener Indonesia</span></span>
         </div>
         <div className="relative max-w-md">
@@ -39,7 +40,7 @@ export default function Login({ onLogin }) {
       <div className="flex flex-col items-center justify-center gap-6 p-4">
         <div className="w-full max-w-sm animate-muncul">
           <div className="mb-6 flex flex-col items-center text-center lg:items-start lg:text-left">
-            <img src="/logo.jpg" alt="Logo PT Yahata Fastener Indonesia" className="mb-3 h-16 w-16 rounded-full lg:hidden" />
+            <img src={logo} alt="Logo PT Yahata Fastener Indonesia" className="mb-3 h-16 w-16 rounded-full lg:hidden" />
             <h1 className="text-2xl font-bold tracking-tight text-gray-950">Masuk ke Superapps</h1>
             <p className="text-sm text-gray-500">Gunakan NIK dan password Anda.</p>
           </div>

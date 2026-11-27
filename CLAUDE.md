@@ -12,10 +12,10 @@ Dirancang 2026-11-21 bersama pemilik saat membangun sistem Safety Patrol
 - Setelah sistem selesai / menjelang produksi: ingatkan pemilik menjalankan `/threat-model deep web with privacy`.
 
 ## Stack (sama dengan Safety Patrol)
-Frontend React (Vite) + Tailwind di root. Backend Laravel 13 + Sanctum (token) di `backend/`, PostgreSQL 16 lokal
+Satu folder (2026-11-27, `backend/` dilebur ke root): React (Vite) + Tailwind di `src/` + `index.html`, Laravel 13 + Sanctum (token) di `app/`, `routes/api.php`, `config/`, `database/`, `tests/` (API saja, tanpa `routes/web.php`/`resources/`). `public/` = web root Laravel, BUKAN folder aset Vite (`publicDir: false`; logo di `src/logo.jpg`, diimpor). PostgreSQL 16 lokal
 (database `superapps`, uji: `superapps_test`).
 - PHP dari Laragon: `E:\laragon\bin\php\php-8.4.12-nts-Win32-vs17-x64\php.exe` (pdo_pgsql, pgsql, zip aktif). Composer: `E:\laragon\bin\composer\composer.phar`.
-- Dev: `php artisan serve` (di `backend/`) + `npx vite --host`. Vite meneruskan `/api` ke Laravel (proxy di `vite.config.js`). Pakai port berbeda dari Safety Patrol (mis. Laravel 8001, Vite 5174) agar bisa jalan bersamaan.
+- Dev: `php artisan serve --port=8001` + `npx vite --host` (keduanya dari root). Vite meneruskan `/api` ke Laravel (proxy di `vite.config.js`). Pakai port berbeda dari Safety Patrol (mis. Laravel 8001, Vite 5174) agar bisa jalan bersamaan.
 - Pola yang sudah terbukti di Safety Patrol (boleh dicontoh, lihat foldernya): `src/api.js` (fetch + token di localStorage), aturan isian sebagai CHECK di database, tolakan database dijadikan pesan 422 di `bootstrap/app.php`, uji di `tests/Feature`.
 - Windows: `vite build` butuh `@rolldown/binding-win32-x64-msvc`.
 
@@ -33,7 +33,7 @@ Frontend React (Vite) + Tailwind di root. Backend Laravel 13 + Sanctum (token) d
 - `superadmin`: kelola akun (NIK, nama, departemen, peran, aktif/nonaktif, reset password) dan centang akses sistem per orang.
 
 ## Akun awal (seeder) — NIK HARUS SAMA dengan seeder tiap sistem
-Password awal semua akun = `SEED_PASSWORD` di `backend/.env`. NIK uji = 900 + nomor departemen + 1/2. Diganti NIK asli lewat menu Kelola.
+Password awal semua akun = `SEED_PASSWORD` di `.env`. NIK uji = 900 + nomor departemen + 1/2. Diganti NIK asli lewat menu Kelola.
 
 | Akun | Peran | NIK |
 |---|---|---|
@@ -62,7 +62,7 @@ $b = rtrim(strtr(base64_encode($nik.'|'.(time() + 60)), '+/', '-_'), '=');
 $tiket = $b.'.'.hash_hmac('sha256', $b, $secret);
 ```
 Sisi penerima menolak bila: tanda tangan salah, exp sudah lewat atau > 120 detik ke depan (jam server harus sinkron), tiket sudah pernah dipakai, NIK tidak terdaftar/nonaktif.
-- Kunci rahasia BEDA untuk tiap sistem, minimal 32 karakter, disimpan di `backend/.env` kedua sisi (mis. `SSO_SECRET_SAFETY=` di Superapps = `SSO_SECRET=` di Safety Patrol). Kunci dev Safety Patrol ada di `systeminformasisafetypatrol/backend/.env`.
+- Kunci rahasia BEDA untuk tiap sistem, minimal 32 karakter, disimpan di `.env` Superapps dan `backend/.env` Safety Patrol (mis. `SSO_SECRET_SAFETY=` di Superapps = `SSO_SECRET=` di Safety Patrol). Kunci dev Safety Patrol ada di `systeminformasisafetypatrol/backend/.env`.
 - Uji sisi penerima tanpa Superapps: di Safety Patrol `php artisan sso:tiket <nik>`.
 
 ## Daftar sistem
@@ -72,14 +72,14 @@ Sisi penerima menolak bila: tanda tangan salah, exp sudah lewat atau > 120 detik
 | Mesin | - | belum |
 | Tooling | - | belum |
 
-Daftar sistem ada di `backend/config/sistem.php` (kode, nama, ket, `URL_<KODE>`, `SSO_SECRET_<KODE>` dari `.env`), bukan tabel, karena menambah sistem selalu butuh kunci baru di `.env`. Akses = tabel `akses(nik, sistem)` (FK ke users.nik, ikut berubah bila NIK diganti). API: `GET /api/sistem` (card), `POST /api/sso/{kode}` (URL bertiket). Uji: `tests/Feature/SsoTest.php`.
+Daftar sistem ada di `config/sistem.php` (kode, nama, ket, `URL_<KODE>`, `SSO_SECRET_<KODE>` dari `.env`), bukan tabel, karena menambah sistem selalu butuh kunci baru di `.env`. Akses = tabel `akses(nik, sistem)` (FK ke users.nik, ikut berubah bila NIK diganti). API: `GET /api/sistem` (card), `POST /api/sso/{kode}` (URL bertiket). Uji: `tests/Feature/SsoTest.php`.
 
 ## Tema UI (sama dengan Safety Patrol, agar terasa satu keluarga)
-Monokrom mengikuti logo YFI (salin `systeminformasisafetypatrol/public/logo.jpg`): warna utama `gray-900`, tanpa hijau/biru/amber; merah hanya untuk makna bahaya/error.
+Monokrom mengikuti logo YFI (`src/logo.jpg`, salinan `systeminformasisafetypatrol/public/logo.jpg`): warna utama `gray-900`, tanpa hijau/biru/amber; merah hanya untuk makna bahaya/error.
 Tata letak (2026-11-24, disamakan dengan Safety Patrol): desktop = sidebar kiri hitam `gray-950` (logo, menu, akun + NIK + Keluar); HP = bar atas hitam, menu bawah hanya bila menu > 1 (superadmin: Beranda/Kelola). Baris judul putih + tanggal. Beranda = kartu sambutan hitam bermotif garis diagonal + card sistem berikon (`ICON` per kode di `Beranda.jsx`, default LayoutGrid). Login = panel hitam bermotif (desktop) + form. Kelola: pesan berhasil/gagal dibedakan, inisial nama, badge status. Memuat = `Skeleton`, animasi `animate-muncul`, Back HP lewat `history.pushState`. Kolom `max-w-6xl`; datar, garis tipis, sudut kecil; font sistem (tanpa Google Fonts); ikon lucide, tanpa emoji. Contoh token gaya: `systeminformasisafetypatrol/src/ui.jsx` (`INPUT`, `CARD`, `CARD_TITLE`, `BTN`, `BTN2`, `Tabs`). Skill `ui-ux-pro-max` tersedia di `.claude/skills/`.
 
 ## Urutan bangun yang disarankan
-1. Kerangka: Laravel + Sanctum di `backend/`, React + Tailwind di root, database `superapps`.
+1. Kerangka: Laravel + Sanctum + React + Tailwind dalam satu folder root, database `superapps`.
 2. (SELESAI) Login NIK + password, tabel users (nik unik, name, dept, role, active), seeder akun di atas.
 3. Halaman card + pembuat tiket di server -> uji nyata masuk ke Safety Patrol. (SELESAI 2026-11-23)
 4. Menu Kelola (superadmin): akun + centang akses per orang. (SELESAI 2026-11-23: `KelolaController`, `src/pages/Kelola.jsx`, `tests/Feature/KelolaTest.php`)

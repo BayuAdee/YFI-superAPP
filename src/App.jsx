@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Home, LogOut, Users } from 'lucide-react'
 import { api, hasToken, logout } from './api'
+import logo from './logo.jpg'
 import Beranda from './pages/Beranda'
 import Kelola from './pages/Kelola'
 import Login from './pages/Login'
@@ -53,7 +54,7 @@ export default function App() {
       {/* ===== Sidebar (desktop) ===== */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-gray-950 text-gray-300 lg:flex">
         <button onClick={() => go('HOME')} className="flex items-center gap-3 border-b border-white/10 px-5 py-5 text-left" aria-label="Ke Beranda">
-          <img src="/logo.jpg" alt="" className="h-10 w-10 shrink-0 rounded-full bg-white ring-2 ring-white/20" />
+          <img src={logo} alt="" className="h-10 w-10 shrink-0 rounded-full bg-white ring-2 ring-white/20" />
           <span className="leading-tight">
             <span className="block text-sm font-bold tracking-wide text-white">SUPERAPPS</span>
             <span className="block text-xs text-gray-400">PT Yahata Fastener Indonesia</span>
@@ -86,7 +87,7 @@ export default function App() {
         {/* ===== Bar atas (HP & tablet) ===== */}
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 bg-gray-950 px-4 text-white lg:hidden">
           <button onClick={() => go('HOME')} className="flex min-w-0 items-center gap-3 text-left" aria-label="Ke Beranda">
-            <img src="/logo.jpg" alt="" className="h-9 w-9 shrink-0 rounded-full bg-white" />
+            <img src={logo} alt="" className="h-9 w-9 shrink-0 rounded-full bg-white" />
             <span className="min-w-0 leading-tight">
               <span className="block truncate text-sm font-bold tracking-wide">SUPERAPPS</span>
               <span className="block truncate text-xs text-gray-400">{profile.name} · {sub}</span>
